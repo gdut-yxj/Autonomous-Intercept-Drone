@@ -237,12 +237,13 @@ void UavTopicSubscrib::image_callback(const sensor_msgs::msg::Image::SharedPtr m
     int centerY = height / 2;
 
 
+// std::vector<cv::Point> ibvs_desire_pos = {cv::Point(374, 190), cv::Point(474, 290)};
+
     // RCLCPP_INFO(this->get_logger(), "centerXY: %d , %d", centerX, centerY);
 
     // 绘制虚线框的起始和结束点
-    int boxSize = 100;
-    cv::Point topLeft(centerX - boxSize / 2, centerY - boxSize / 2);
-    cv::Point bottomRight(centerX + boxSize / 2, centerY + boxSize / 2);
+    cv::Point topLeft(200, 160);
+    cv::Point bottomRight(600, 300);
 
     RCLCPP_INFO(this->get_logger(), "centerXY: %d %d %d %d", topLeft.x, topLeft.y, bottomRight.x, bottomRight.y);
 
