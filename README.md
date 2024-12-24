@@ -4,18 +4,20 @@ An Autonomous Intercept Drone with Image-based Visual Servo.
 
 ![效果图片1](./results_picture/1.jpg "Gazebo")
 
-## 1、启动仿真环境
-### 1.1 编译PX4命令获取两架iris模型无人机和深度相机无人机
-```sh
+## 仿真环境
+
+编译PX4命令获取两架iris模型无人机和深度相机无人机
+```bash
 ./Tools/simulation/gazebo-classic/sitl_multiple_run.sh -s "iris_depth_camera:1, iris:1"
+
 ```
-### 1.2 UDP通信
-```sh
+**UDP**通信
+```bash
 MicroXRCEAgent udp4 -p 8888
 ```
 
-### 2、单机无人机
-```sh
+单台无人机仿真
+```bash
 make px4_sitl gazebo-classic
 ```
 
