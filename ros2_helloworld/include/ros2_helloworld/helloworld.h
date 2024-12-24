@@ -5,20 +5,30 @@
 #ifndef HELLOWORLD_H
 #define HELLOWORLD_H
 
+#include <chrono>
 #include <iostream>
 #include <rclcpp/node.hpp>
+#include <rclcpp/timer.hpp>
 
-class helloworld : public rclcpp::Node{
-public:
-    helloworld() : Node("helloworld") {};
+class HelloWorld : public rclcpp::Node 
+{
+    public:
+        HelloWorld() : Node("helloworld") 
+        {
 
-    void say_something_node(std::string something)
-    {
-        std::cout << "say_something_node say:" << something << std::endl;
-        
-    }
+            timer_ = this->create_wall_timer(
+                std::chrono::milliseconds(500),
+                std::bind(&HelloWorld::timer_callback, this)
+            );
+        }
+
+    private:
+        void timer_callback() 
+        {
+            RCLCPP_INFO(this->get_logger(), "say_something_node say: Hello world");
+        }
+
+        rclcpp::TimerBase::SharedPtr timer_;
 };
-
-
 
 #endif //HELLOWORLD_H

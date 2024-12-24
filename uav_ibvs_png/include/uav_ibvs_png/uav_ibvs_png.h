@@ -48,10 +48,10 @@ class uav_ibvs_png : public rclcpp::Node
 
 
         std::vector<cv::Point> ibvs_current_pos = {cv::Point(374, 190), cv::Point(474, 290)};
-        std::vector<cv::Point> ibvs_desire_pos = {cv::Point(374, 190), cv::Point(474, 290)};
+        std::vector<cv::Point> ibvs_desire_pos = {cv::Point(200, 160), cv::Point(600, 300)};
         cv::Rect callback_detect_result;
 
-
+        px4_msgs::msg::TrajectorySetpoint ibvs_png_msg{};
 
         std::vector<std::float_t> K = {0, 0, 0, 0, 0, 0, 0, 0 ,0};
         float target_angle;                                         //计算视线角度
@@ -63,10 +63,16 @@ class uav_ibvs_png : public rclcpp::Node
 
         rclcpp::Publisher<px4_msgs::msg::OffboardControlMode>::SharedPtr	offboard_control_mode_publisher_;
         rclcpp::Publisher<px4_msgs::msg::VehicleCommand>::SharedPtr         ibvs_vehicle_command_publisher_;
+        rclcpp::Publisher<px4_msgs::msg::TrajectorySetpoint>::SharedPtr	    ibvs_trajectory_setpoint_publisher_;
 
+        std::thread uav_takeoff_thread_;
 
+        void uav_takeoff_loop();
         void uav_detect_callback(const uav_common_msg::msg::RectMsg::SharedPtr msg);
         void uav_camera_info_callback(const sensor_msgs::msg::CameraInfo::SharedPtr msg);
+        void publish_offboard_control_mode();
+        void publish_vehicle_command(uint16_t command, float param1, float param2);
+
 };
 
 

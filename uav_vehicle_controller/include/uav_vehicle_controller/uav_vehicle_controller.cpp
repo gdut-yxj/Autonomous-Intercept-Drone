@@ -71,10 +71,10 @@ uav_vehicle_controller::uav_vehicle_controller() : Node("uav_vehicle_controller"
     keyboard_msg.yaw = 3.14; // [-PI:PI]
 
     // 创建无人机控制命令发布者
-    offboard_control_mode_publisher_ = this->create_publisher<OffboardControlMode>("/fmu/in/offboard_control_mode", 10);
-    trajectory_setpoint_publisher_   = this->create_publisher<TrajectorySetpoint>("/fmu/in/trajectory_setpoint", 10);
-    vehicle_command_publisher_       = this->create_publisher<VehicleCommand>("/fmu/in/vehicle_command", 10);
-    vehicle_odometry_subscription_   = this->create_subscription<VehicleOdometry>("/fmu/out/vehicle_odometry", qos,  std::bind(&uav_vehicle_controller::vehicle_odometry_callback, this, std::placeholders::_1));
+    offboard_control_mode_publisher_ = this->create_publisher<OffboardControlMode>("/px4_1/fmu/in/offboard_control_mode", 10);
+    trajectory_setpoint_publisher_   = this->create_publisher<TrajectorySetpoint>("/px4_1/fmu/in/trajectory_setpoint", 10);
+    vehicle_command_publisher_       = this->create_publisher<VehicleCommand>("/px4_1/fmu/in/vehicle_command", 10);
+    vehicle_odometry_subscription_   = this->create_subscription<VehicleOdometry>("/px4_1/fmu/out/vehicle_odometry", qos,  std::bind(&uav_vehicle_controller::vehicle_odometry_callback, this, std::placeholders::_1));
     control_thread_                  = std::thread(&uav_vehicle_controller::uav_takeoff_loop, this);
     keyboard_thread_                 = std::thread(&uav_vehicle_controller::run, this);
 

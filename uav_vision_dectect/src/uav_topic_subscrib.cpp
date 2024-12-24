@@ -237,8 +237,7 @@ void UavTopicSubscrib::image_callback(const sensor_msgs::msg::Image::SharedPtr m
     int centerY = height / 2;
 
 
-// std::vector<cv::Point> ibvs_desire_pos = {cv::Point(374, 190), cv::Point(474, 290)};
-
+    // std::vector<cv::Point> ibvs_desire_pos = {cv::Point(374, 190), cv::Point(474, 290)};
     // RCLCPP_INFO(this->get_logger(), "centerXY: %d , %d", centerX, centerY);
 
     // 绘制虚线框的起始和结束点

@@ -127,7 +127,7 @@ class DroneKeyboardControl : public rclcpp::Node
                         break;
 
                     case 'a':
-                        keyboard_msg.position[1] += 0.5;
+                        keyboard_msg.yaw += 0.5;
                         // keyboard_msg.yaw = -3.14; // [-PI:PI]
                         keyboard_msg.timestamp = this->get_clock()->now().nanoseconds() / 1000;
                         trajectory_setpoint_publisher_->publish(keyboard_msg);
@@ -135,7 +135,7 @@ class DroneKeyboardControl : public rclcpp::Node
                         break;
 
                     case 'd':
-                        keyboard_msg.position[1] -= 0.5;
+                        keyboard_msg.yaw -= 0.5;
                         // keyboard_msg.yaw = -3.14; // [-PI:PI]
                         keyboard_msg.timestamp = this->get_clock()->now().nanoseconds() / 1000;
                         trajectory_setpoint_publisher_->publish(keyboard_msg);
