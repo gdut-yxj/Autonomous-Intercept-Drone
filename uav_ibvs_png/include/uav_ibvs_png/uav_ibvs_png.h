@@ -12,8 +12,10 @@
 
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpPoint.h>
 #include <visp3/robot/vpSimulatorCamera.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
+#include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/vs/vpServo.h>
 
 
@@ -35,20 +37,22 @@ class uav_ibvs_png : public rclcpp::Node
     private:
 
         vpHomogeneousMatrix cdMo;     /* 相机目标位置 */
-        vpHomogeneousMatrix cMo; /* 相机初始位置 */
+        vpHomogeneousMatrix cMo;      /* 相机初始位置 */
 
         std::vector<vpPoint> ibvs_set_point;
+        std::vector<vpPoint> ibvs_current_point;
         vpServo ibvs_servo_task;
 
         vpHomogeneousMatrix wMc, wMo;
         vpSimulatorCamera robot;
 
         vpFeaturePoint p[4], pd[4];
+        vpFeaturePoint current_point[4], desired_point[4];
 
 
 
-        std::vector<cv::Point> ibvs_current_pos = {cv::Point(374, 190), cv::Point(474, 290)};
-        std::vector<cv::Point> ibvs_desire_pos = {cv::Point(200, 160), cv::Point(600, 300)};
+        std::vector<cv::Point> desire_pos_ = {cv::Point(200, 160), cv::Point(600, 300)};
+        std::vector<cv::Point> current_pos_ = {cv::Point(374, 190), cv::Point(474, 290)};
         cv::Rect callback_detect_result;
 
         px4_msgs::msg::TrajectorySetpoint ibvs_png_msg{};

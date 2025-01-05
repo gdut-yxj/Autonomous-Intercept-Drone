@@ -17,7 +17,7 @@ uav_ibvs_png::uav_ibvs_png() : Node("uav_ibvs_png")
     rmw_qos_profile_t qos_profile = rmw_qos_profile_sensor_data;
     auto os = rclcpp::QoS(rclcpp::QoSInitialization(qos_profile.history, 5), qos_profile);
     uav_detect_sub_ = this->create_subscription<uav_common_msg::msg::RectMsg>("/uav_detect_result", 10,  std::bind(&uav_ibvs_png::uav_detect_callback, this, std::placeholders::_1));
-    uav_camera_sub_ = this->create_subscription<sensor_msgs::msg::CameraInfo>("/camera/camera_info", 10,  std::bind(&uav_ibvs_png::uav_camera_info_callback, this, std::placeholders::_1));
+    // uav_camera_sub_ = this->create_subscription<sensor_msgs::msg::CameraInfo>("/camera/camera_info", 10,  std::bind(&uav_ibvs_png::uav_camera_info_callback, this, std::placeholders::_1));
 
     offboard_control_mode_publisher_ = this->create_publisher<OffboardControlMode>("/px4_1/fmu/in/offboard_control_mode", 10);
     ibvs_vehicle_command_publisher_ = this->create_publisher<VehicleCommand>("/px4_1/fmu/in/vehicle_command", 10);
@@ -26,19 +26,20 @@ uav_ibvs_png::uav_ibvs_png() : Node("uav_ibvs_png")
 
     /************************************设置期望位置************************************/
     //初始化数据变量
-    cdMo = vpHomogeneousMatrix(20, 0, 0.05, 0, 0, 0);  //相机终点位置
+    cdMo = vpHomogeneousMatrix(0, 0, 0.05, 0, 0, 0);  //相机终点位置
     cMo = vpHomogeneousMatrix(0.15, -0.1, 10.0, vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));  //相机起始位置
 
     //角点
-    ibvs_set_point.push_back(vpPoint(ibvs_desire_pos[0].x, ibvs_desire_pos[0].y, 0));
-    ibvs_set_point.push_back(vpPoint(ibvs_desire_pos[1].x, ibvs_desire_pos[1].y, 0));
-    ibvs_set_point.push_back(vpPoint(ibvs_desire_pos[2].x, ibvs_desire_pos[2].y, 0));
-    ibvs_set_point.push_back(vpPoint(ibvs_desire_pos[3].x, ibvs_desire_pos[3].y, 0));
+    ibvs_set_point.push_back(vpPoint(desire_pos_[0].x, desire_pos_[0].y, 0));
+    ibvs_set_point.push_back(vpPoint(desire_pos_[1].x, desire_pos_[1].y, 0));
+    ibvs_set_point.push_back(vpPoint(desire_pos_[2].x, desire_pos_[2].y, 0));
+    ibvs_set_point.push_back(vpPoint(desire_pos_[3].x, desire_pos_[3].y, 0));
 
 
     ibvs_servo_task.setServo(vpServo::EYEINHAND_CAMERA);
     ibvs_servo_task.setInteractionMatrixType(vpServo::CURRENT);
-    ibvs_servo_task.setLambda(0.1);   //伺服增益
+    ibvs_servo_task.setLambda(0.001);   //伺服增益
+
 
     for (unsigned int i = 0; i < 4; i++)
     {
@@ -63,7 +64,7 @@ uav_ibvs_png::uav_ibvs_png() : Node("uav_ibvs_png")
 
     /************************************启动TakeOff线程************************************/
     ibvs_png_msg.position = {5.0, 5.0, -5.0};
-    ibvs_png_msg.velocity = {1.0, 1.0, -1.0};
+    ibvs_png_msg.velocity = {0, 0, 0};
     ibvs_png_msg.yaw = 3.14;
     uav_takeoff_thread_ = std::thread(&uav_ibvs_png::uav_takeoff_loop, this);
 
@@ -74,9 +75,9 @@ uav_ibvs_png::uav_ibvs_png() : Node("uav_ibvs_png")
 void uav_ibvs_png::publish_offboard_control_mode()
 {
     OffboardControlMode msg{};
-    msg.position = true;
+    msg.position = false;
     msg.velocity = true;
-    msg.acceleration = false;
+    msg.acceleration = true;
     msg.attitude = false;
     msg.body_rate = false;
     msg.timestamp = this->get_clock()->now().nanoseconds() / 1000;
@@ -105,10 +106,12 @@ void uav_ibvs_png::publish_vehicle_command(uint16_t command, float param1, float
 
 void uav_ibvs_png::uav_detect_callback(const uav_common_msg::msg::RectMsg::SharedPtr msg)
 {
-    ibvs_current_pos[0] = cv::Point(msg->x, msg->y);
-    ibvs_current_pos[1] = cv::Point(msg->x + msg->width, msg->y);
-    ibvs_current_pos[2] = cv::Point(msg->x + msg->width, msg->y + msg->height);
-    ibvs_current_pos[3] = cv::Point(msg->x, msg->y + msg->height);
+    RCLCPP_INFO(this->get_logger(), "------------uav_detect_callback------------");
+
+    current_pos_[0] = cv::Point(msg->x, msg->y);
+    current_pos_[1] = cv::Point(msg->x + msg->width, msg->y);
+    current_pos_[2] = cv::Point(msg->x + msg->width, msg->y + msg->height);
+    current_pos_[3] = cv::Point(msg->x, msg->y + msg->height);
 
 }
 
@@ -137,10 +140,17 @@ vpColVector uav_ibvs_png::uav_ibvs_controller()
     /************************************计算当前与期望************************************/
     robot.getPosition(wMc);
     cMo = wMc.inverse() * wMo;
+
+    ibvs_current_point.push_back(vpPoint(current_pos_[0].x, current_pos_[0].y, 0));
+    ibvs_current_point.push_back(vpPoint(current_pos_[1].x, current_pos_[1].y, 0));
+    ibvs_current_point.push_back(vpPoint(current_pos_[2].x, current_pos_[2].y, 0));
+    ibvs_current_point.push_back(vpPoint(current_pos_[3].x, current_pos_[3].y, 0));
+
+
     for (unsigned int i = 0; i < 4; i++)
     {
         ibvs_set_point[i].track(cMo);
-        vpFeatureBuilder::create(p[i], ibvs_set_point[i]);
+        vpFeatureBuilder::create(p[i], ibvs_current_point[i]);
     }
     vpColVector v = ibvs_servo_task.computeControlLaw();
     robot.setVelocity(vpRobot::CAMERA_FRAME, v);
@@ -154,16 +164,19 @@ vpColVector uav_ibvs_png::uav_ibvs_controller()
 
 
     /********************************************************/
-    // ibvs_png_msg.velocity[0] = 1;
-    // ibvs_png_msg.velocity[1] = 1;
-    // ibvs_png_msg.velocity[2] = -1;
-    // ibvs_png_msg.yaw = 3.14;
-
-
     ibvs_png_msg.velocity[0] = v[0];
     ibvs_png_msg.velocity[1] = v[1];
     ibvs_png_msg.velocity[2] = v[2];
-    ibvs_png_msg.yaw = v[3];
+
+    // ibvs_png_msg.velocity[0] = 0.01;
+    // ibvs_png_msg.velocity[1] = 0;
+    // ibvs_png_msg.velocity[2] = 0;
+
+    ibvs_png_msg.acceleration[0] = 3; // X方向加速度
+    ibvs_png_msg.acceleration[1] = 0.0; // Y方向加速度
+    ibvs_png_msg.acceleration[2] = 0; // Z方向加速度
+
+    ibvs_png_msg.yaw = vpMath::rad(v[5]) + 3.14;
 
     ibvs_png_msg.timestamp = this->get_clock()->now().nanoseconds() / 1000;
     ibvs_trajectory_setpoint_publisher_->publish(ibvs_png_msg);
@@ -194,5 +207,4 @@ void uav_ibvs_png::uav_takeoff_loop()
         loop_rate.sleep();
     }
 }
-
 

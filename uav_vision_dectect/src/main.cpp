@@ -23,7 +23,7 @@ int main(int argc, char const *argv[])
     rclcpp::executors::MultiThreadedExecutor executor;
 
     executor.add_node(uav_image_detector_node);
-    executor.add_node(uav_offboard_control_node);
+    // executor.add_node(uav_offboard_control_node);
 
     executor.spin();
 

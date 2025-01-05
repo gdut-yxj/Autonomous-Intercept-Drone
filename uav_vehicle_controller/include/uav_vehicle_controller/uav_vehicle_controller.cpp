@@ -65,8 +65,8 @@ uav_vehicle_controller::uav_vehicle_controller() : Node("uav_vehicle_controller"
     auto qos = rclcpp::QoS(rclcpp::QoSInitialization(qos_profile.history, 5), qos_profile);
 
     //参数初始化
-    keyboard_msg.position = {5.0, 5.0, -5.0};
-    keyboard_msg.velocity = {1.0, 1.0, -1.0};
+    keyboard_msg.position = {nan(""), nan(""), nan("")};
+    keyboard_msg.velocity = {0, 0, 0};
 
     keyboard_msg.yaw = 3.14; // [-PI:PI]
 
@@ -87,7 +87,7 @@ void uav_vehicle_controller::uav_takeoff_loop()
 {
     RCLCPP_INFO(this->get_logger(), "Arm command send");
 
-    rclcpp::WallRate loop_rate(10);
+    rclcpp::WallRate loop_rate(30);
 
     while (rclcpp::ok())
     {
@@ -104,7 +104,7 @@ void uav_vehicle_controller::uav_takeoff_loop()
 void uav_vehicle_controller::publish_offboard_control_mode()
 {
     OffboardControlMode msg{};
-    msg.position = true;
+    msg.position = false;
     msg.velocity = true;
     msg.acceleration = false;
     msg.attitude = false;
@@ -116,6 +116,7 @@ void uav_vehicle_controller::publish_offboard_control_mode()
 
 void uav_vehicle_controller::publish_trajectory_setpoint()
 {
+    RCLCPP_INFO(this->get_logger(), "----------x:%f, y:%f, z:%f", keyboard_msg.velocity[0], keyboard_msg.velocity[1], keyboard_msg.velocity[2]);
     keyboard_msg.timestamp = this->get_clock()->now().nanoseconds() / 1000;
     trajectory_setpoint_publisher_->publish(keyboard_msg);
 
@@ -127,7 +128,7 @@ void uav_vehicle_controller::publish_vehicle_command(uint16_t command, float par
     msg.param1 = param1;
     msg.param2 = param2;
     msg.command = command;
-    msg.target_system = 1;
+    msg.target_system = 2;
     msg.target_component = 1;
     msg.source_system = 1;
     msg.source_component = 1;
@@ -184,10 +185,6 @@ void uav_vehicle_controller:: run()
                     uav_vehicle_ += 0.05;
                     keyboard_msg.velocity[0] = uav_vehicle_ * cos(uav_current_yaw);
                     keyboard_msg.velocity[1] = uav_vehicle_ * sin(uav_current_yaw);
-
-
-                    keyboard_msg.timestamp = this->get_clock()->now().nanoseconds() / 1000;
-                    trajectory_setpoint_publisher_->publish(keyboard_msg);
                     RCLCPP_INFO(this->get_logger(), "Moving Forward");
                     RCLCPP_INFO(this->get_logger(), "x:%f, y:%f",  keyboard_msg.velocity[0],  keyboard_msg.velocity[1]);
                     RCLCPP_INFO(this->get_logger(), "roll:%f, pitch:%f, yaw:%f", uav_current_roll, uav_current_pitch, uav_current_yaw);
@@ -198,9 +195,6 @@ void uav_vehicle_controller:: run()
                     uav_vehicle_ -= 0.05;
                     keyboard_msg.velocity[0] = uav_vehicle_ * cos(uav_current_yaw);
                     keyboard_msg.velocity[1] = uav_vehicle_ * sin(uav_current_yaw);
-
-                    keyboard_msg.timestamp = this->get_clock()->now().nanoseconds() / 1000;
-                    trajectory_setpoint_publisher_->publish(keyboard_msg);
                     RCLCPP_INFO(this->get_logger(), "Moving Backward");
                     RCLCPP_INFO(this->get_logger(), "x:%f, y:%f",  keyboard_msg.velocity[0],  keyboard_msg.velocity[1]);
                     RCLCPP_INFO(this->get_logger(), "roll:%f, pitch:%f, yaw:%f", uav_current_roll, uav_current_pitch, uav_current_yaw);
@@ -209,8 +203,6 @@ void uav_vehicle_controller:: run()
 
                 case 'a':
                     keyboard_msg.yaw += 0.05;
-                    keyboard_msg.timestamp = this->get_clock()->now().nanoseconds() / 1000;
-                    trajectory_setpoint_publisher_->publish(keyboard_msg);
                     RCLCPP_INFO(this->get_logger(), "Moving Left");
                     RCLCPP_INFO(this->get_logger(), "roll:%f, pitch:%f, yaw:%f", uav_current_roll, uav_current_pitch, uav_current_yaw);
                     break;
@@ -218,8 +210,6 @@ void uav_vehicle_controller:: run()
 
                 case 'd':
                     keyboard_msg.yaw -= 0.05;
-                    keyboard_msg.timestamp = this->get_clock()->now().nanoseconds() / 1000;
-                    trajectory_setpoint_publisher_->publish(keyboard_msg);
                     RCLCPP_INFO(this->get_logger(), "Moving Right");
                     RCLCPP_INFO(this->get_logger(), "roll:%f, pitch:%f, yaw:%f", uav_current_roll, uav_current_pitch, uav_current_yaw);
 
@@ -227,16 +217,14 @@ void uav_vehicle_controller:: run()
 
                 case 'q':
                     keyboard_msg.velocity[2] -= 0.05;
-                    keyboard_msg.timestamp = this->get_clock()->now().nanoseconds() / 1000;
-                    trajectory_setpoint_publisher_->publish(keyboard_msg);
                     RCLCPP_INFO(this->get_logger(), "Moving Up");
+                    RCLCPP_INFO(this->get_logger(), "z:%f",  keyboard_msg.velocity[2]);
                     break;
 
                 case 'e':
                     keyboard_msg.velocity[2] += 0.05;
-                    keyboard_msg.timestamp = this->get_clock()->now().nanoseconds() / 1000;
-                    trajectory_setpoint_publisher_->publish(keyboard_msg);
                     RCLCPP_INFO(this->get_logger(), "Moving Down");
+                    RCLCPP_INFO(this->get_logger(), "z:%f",  keyboard_msg.velocity[2]);
                     break;
 
                 case 'x':
