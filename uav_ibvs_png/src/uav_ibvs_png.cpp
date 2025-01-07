@@ -26,7 +26,7 @@ uav_ibvs_png::uav_ibvs_png() : Node("uav_ibvs_png")
 
     /************************************设置期望位置************************************/
     //初始化数据变量
-    cdMo = vpHomogeneousMatrix(0, 0, 0.05, 0, 0, 0);  //相机终点位置
+    cdMo = vpHomogeneousMatrix(0, 0, 0.75, 0, 0, 0);  //相机终点位置
     cMo = vpHomogeneousMatrix(0.15, -0.1, 10.0, vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50));  //相机起始位置
 
     //角点
@@ -38,7 +38,7 @@ uav_ibvs_png::uav_ibvs_png() : Node("uav_ibvs_png")
 
     ibvs_servo_task.setServo(vpServo::EYEINHAND_CAMERA);
     ibvs_servo_task.setInteractionMatrixType(vpServo::CURRENT);
-    ibvs_servo_task.setLambda(0.001);   //伺服增益
+    ibvs_servo_task.setLambda(0.01);   //伺服增益
 
 
     for (unsigned int i = 0; i < 4; i++)
@@ -63,7 +63,7 @@ uav_ibvs_png::uav_ibvs_png() : Node("uav_ibvs_png")
 
 
     /************************************启动TakeOff线程************************************/
-    ibvs_png_msg.position = {5.0, 5.0, -5.0};
+    ibvs_png_msg.position = {nan(""), nan(""), nan("")};
     ibvs_png_msg.velocity = {0, 0, 0};
     ibvs_png_msg.yaw = 3.14;
     uav_takeoff_thread_ = std::thread(&uav_ibvs_png::uav_takeoff_loop, this);
@@ -77,7 +77,7 @@ void uav_ibvs_png::publish_offboard_control_mode()
     OffboardControlMode msg{};
     msg.position = false;
     msg.velocity = true;
-    msg.acceleration = true;
+    msg.acceleration = false;
     msg.attitude = false;
     msg.body_rate = false;
     msg.timestamp = this->get_clock()->now().nanoseconds() / 1000;
@@ -107,6 +107,7 @@ void uav_ibvs_png::publish_vehicle_command(uint16_t command, float param1, float
 void uav_ibvs_png::uav_detect_callback(const uav_common_msg::msg::RectMsg::SharedPtr msg)
 {
     RCLCPP_INFO(this->get_logger(), "------------uav_detect_callback------------");
+    RCLCPP_INFO(this->get_logger(), "XYWH: %d %d %d %d", msg->x, msg->y, msg->width, msg->height);
 
     current_pos_[0] = cv::Point(msg->x, msg->y);
     current_pos_[1] = cv::Point(msg->x + msg->width, msg->y);
@@ -168,20 +169,11 @@ vpColVector uav_ibvs_png::uav_ibvs_controller()
     ibvs_png_msg.velocity[1] = v[1];
     ibvs_png_msg.velocity[2] = v[2];
 
-    // ibvs_png_msg.velocity[0] = 0.01;
-    // ibvs_png_msg.velocity[1] = 0;
-    // ibvs_png_msg.velocity[2] = 0;
-
-    ibvs_png_msg.acceleration[0] = 3; // X方向加速度
-    ibvs_png_msg.acceleration[1] = 0.0; // Y方向加速度
-    ibvs_png_msg.acceleration[2] = 0; // Z方向加速度
 
     ibvs_png_msg.yaw = vpMath::rad(v[5]) + 3.14;
 
     ibvs_png_msg.timestamp = this->get_clock()->now().nanoseconds() / 1000;
     ibvs_trajectory_setpoint_publisher_->publish(ibvs_png_msg);
-
-
 
     return v;
 

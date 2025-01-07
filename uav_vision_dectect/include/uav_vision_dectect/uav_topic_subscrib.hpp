@@ -30,6 +30,8 @@ class UavTopicSubscrib : public rclcpp::Node
 
     private:
 
+
+
         rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr uav_image_sub_;
         rclcpp::Subscription<px4_msgs::msg::VehicleGlobalPosition>::SharedPtr global_position_sub_;
         rclcpp::Subscription<px4_msgs::msg::VehicleLocalPosition>::SharedPtr local_position_sub_;
@@ -37,6 +39,9 @@ class UavTopicSubscrib : public rclcpp::Node
 
 
         rclcpp::Publisher<uav_common_msg::msg::RectMsg>::SharedPtr uav_detect_result_publisher_;
+        
+        
+        uav_common_msg::msg::RectMsg pub_uav_result_rect;
 
         cv_bridge::CvImagePtr orig_cv_ptr;
 
@@ -47,6 +52,10 @@ class UavTopicSubscrib : public rclcpp::Node
         LightTrack *siam_tracker;
 
         int light_track_flag = 0;
+
+        std::thread uav_detect_result_thread_;
+
+        void uav_detect_result_loop();
 
         void image_callback(const sensor_msgs::msg::Image::SharedPtr msg);
 

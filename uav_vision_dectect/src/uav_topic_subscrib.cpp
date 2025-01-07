@@ -72,7 +72,29 @@ UavTopicSubscrib::UavTopicSubscrib() : Node("uav_topic_subscrib")
 
 
     uav_detect_result_publisher_ = this->create_publisher<uav_common_msg::msg::RectMsg>("/uav_detect_result", 10);
+    uav_detect_result_thread_ = std::thread(&UavTopicSubscrib::uav_detect_result_loop, this);
 
+
+}
+
+
+
+
+void UavTopicSubscrib::uav_detect_result_loop()
+{
+    rclcpp::WallRate loop_rate(30);
+
+    while (rclcpp::ok())
+    {
+        pub_uav_result_rect.header = std_msgs::msg::Header();
+        pub_uav_result_rect.x = uav_result_rect.x;
+        pub_uav_result_rect.y = uav_result_rect.y;
+        pub_uav_result_rect.width = uav_result_rect.width;
+        pub_uav_result_rect.height = uav_result_rect.height;
+        uav_detect_result_publisher_->publish(pub_uav_result_rect);
+
+        loop_rate.sleep();
+    }
 }
 
 
@@ -257,13 +279,13 @@ void UavTopicSubscrib::image_callback(const sensor_msgs::msg::Image::SharedPtr m
     }
 
 
-    uav_common_msg::msg::RectMsg pub_uav_result_rect;
-    pub_uav_result_rect.header = std_msgs::msg::Header();
-    pub_uav_result_rect.x = uav_result_rect.x;
-    pub_uav_result_rect.y = uav_result_rect.y;
-    pub_uav_result_rect.width = uav_result_rect.width;
-    pub_uav_result_rect.height = uav_result_rect.height;
-    uav_detect_result_publisher_->publish(pub_uav_result_rect);
+
+    // pub_uav_result_rect.header = std_msgs::msg::Header();
+    // pub_uav_result_rect.x = uav_result_rect.x;
+    // pub_uav_result_rect.y = uav_result_rect.y;
+    // pub_uav_result_rect.width = uav_result_rect.width;
+    // pub_uav_result_rect.height = uav_result_rect.height;
+    // uav_detect_result_publisher_->publish(pub_uav_result_rect);
 
     // 显示图像
     cv::imshow("Camera Image", frame);
