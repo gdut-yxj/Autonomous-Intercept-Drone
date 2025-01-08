@@ -1,1 +1,0 @@
-在 /home/verse/ros2_ws/src/px4_gazebo_sim 中找不到 CMakeLists.txt 选择 CMakeLists.txt

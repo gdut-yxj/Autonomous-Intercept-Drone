@@ -155,7 +155,7 @@ vpColVector uav_ibvs_png::uav_ibvs_controller()
     }
     vpColVector v = ibvs_servo_task.computeControlLaw();
     robot.setVelocity(vpRobot::CAMERA_FRAME, v);
-    
+     
     std::cout << "=========V=========" << std::endl;
     
     for (unsigned int i = 0; i < v.size(); ++i)

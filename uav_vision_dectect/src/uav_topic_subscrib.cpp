@@ -278,15 +278,6 @@ void UavTopicSubscrib::image_callback(const sensor_msgs::msg::Image::SharedPtr m
         cv::line(frame, cv::Point(bottomRight.x, i), cv::Point(bottomRight.x, i + 2), cv::Scalar(0, 0, 255), 1);
     }
 
-
-
-    // pub_uav_result_rect.header = std_msgs::msg::Header();
-    // pub_uav_result_rect.x = uav_result_rect.x;
-    // pub_uav_result_rect.y = uav_result_rect.y;
-    // pub_uav_result_rect.width = uav_result_rect.width;
-    // pub_uav_result_rect.height = uav_result_rect.height;
-    // uav_detect_result_publisher_->publish(pub_uav_result_rect);
-
     // 显示图像
     cv::imshow("Camera Image", frame);
     cv::waitKey(1);
