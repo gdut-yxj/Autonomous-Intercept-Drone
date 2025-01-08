@@ -26,7 +26,7 @@ An Autonomous Intercept Drone with Image-based Visual Servo.
 MicroXRCEAgent udp4 -p 8888
 ```
 
-单台无人机仿真
+单台无人机仿真(测试使用)
 ```bash
 make px4_sitl gazebo-classic
 ```
