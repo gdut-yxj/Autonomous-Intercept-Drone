@@ -51,13 +51,13 @@ class uav_ibvs_png : public rclcpp::Node
 
 
 
-        std::vector<cv::Point> desire_pos_ = {cv::Point(200, 160), cv::Point(600, 300)};
+        std::vector<cv::Point> desire_pos_ = {cv::Point(400, 200), cv::Point(500, 250)};
         std::vector<cv::Point> current_pos_ = {cv::Point(374, 190), cv::Point(474, 290)};
         cv::Rect callback_detect_result;
 
         px4_msgs::msg::TrajectorySetpoint ibvs_png_msg{};
 
-        std::vector<std::float_t> K = {0, 0, 0, 0, 0, 0, 0, 0 ,0};
+        std::vector<std::float_t> K = {0.0, 0.0, 0.0, 0, 0, 0, 0, 0 ,0};
         float target_angle;                                         //计算视线角度
 
 
