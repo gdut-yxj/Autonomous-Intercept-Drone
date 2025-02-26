@@ -17,7 +17,7 @@ int main(int argc, char const *argv[])
 
     //图像检测节点
     auto uav_image_detector_node = std::make_shared<UavTopicSubscrib>();
-    //Interceptor节点
+
     auto uav_offboard_control_node = std::make_shared<UavControl>();
 
     rclcpp::executors::MultiThreadedExecutor executor;

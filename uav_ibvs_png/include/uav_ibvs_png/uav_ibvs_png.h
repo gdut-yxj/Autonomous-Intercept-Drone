@@ -28,6 +28,9 @@
 #include <sensor_msgs/msg/camera_info.hpp>
 
 
+#include <visp3/gui/vpPlot.h>
+
+
 class uav_ibvs_png : public rclcpp::Node
 {
     public:
@@ -36,8 +39,9 @@ class uav_ibvs_png : public rclcpp::Node
 
     private:
 
-        vpHomogeneousMatrix cdMo;     /* 相机目标位置 */
-        vpHomogeneousMatrix cMo;      /* 相机初始位置 */
+        double depth_z =  0;
+        vpHomogeneousMatrix cdMo;     // 相机目标位置
+        vpHomogeneousMatrix cMo;      // 相机初始位置
 
         std::vector<vpPoint> ibvs_set_point;
         std::vector<vpPoint> ibvs_current_point;
@@ -45,6 +49,9 @@ class uav_ibvs_png : public rclcpp::Node
 
         vpHomogeneousMatrix wMc, wMo;
         vpSimulatorCamera robot;
+
+        vpPlot plotter;
+        vpImage<unsigned char> I; // Create a gray level image container
 
         vpFeaturePoint p[4], pd[4];
         vpFeaturePoint current_point[4], desired_point[4];

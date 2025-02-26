@@ -2,10 +2,8 @@
 // Created by verse on 24-10-9.
 //
 #include "uav_topic_subscrib.hpp"
-
 #include "opencv2/opencv.hpp"
 #include <cv_bridge/cv_bridge.h>
-
 #include <iostream>
 #include <chrono>
 #include <vector>
@@ -95,7 +93,6 @@ UavTopicSubscrib::UavTopicSubscrib() : Node("uav_topic_subscrib")
 
 
 
-
 void UavTopicSubscrib::uav_detect_result_loop()
 {
     rclcpp::WallRate loop_rate(30);
@@ -107,9 +104,8 @@ void UavTopicSubscrib::uav_detect_result_loop()
         pub_uav_result_rect.y = uav_result_rect.y;
         pub_uav_result_rect.width = uav_result_rect.width;
         pub_uav_result_rect.height = uav_result_rect.height;
-        pub_uav_result_rect.depth = obj_depth;
+        pub_uav_result_rect.depth = obj_depth;                      //添加深度信息，该深度相对于目标位置
         
-
         uav_detect_result_publisher_->publish(pub_uav_result_rect);
 
         loop_rate.sleep();

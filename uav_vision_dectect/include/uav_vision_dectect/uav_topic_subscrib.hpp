@@ -53,18 +53,19 @@ class UavTopicSubscrib : public rclcpp::Node
         Mat objPM;
         double obj_depth;
         std::vector<Point3f> objectPoints;             //三维坐标点
-        std::vector<Point2f> projectedPoints;         //三维点投影到二维点的向量用于重画
+        std::vector<Point2f> projectedPoints;          //三维点投影到二维点的向量用于重画
 
         cv::Mat rvec = cv::Mat::zeros(3, 1, CV_64F); // 创建旋转向量矩阵
         cv::Mat tvec = cv::Mat::zeros(3, 1, CV_64F); // 创建平移向量矩阵
 
+        //矩阵K、D来自话题/camera/camera_info
         const double cameraD[3][3] = 
         {
-            {473.411861, 0, 387.628278},
-            {0.000000, 468.794785, 260.630663},
+            {454.68577, 0, 424.5},
+            {0.000000, 454.68577, 240.5},
             {0, 0, 1.0000}
         };
-        const double distC[5] = {-0.208471, 0.224600, -0.000323, -0.027705, 0};
+        const double distC[5] = {0, 0, 0, 0, 0};
 
         cv::Mat cameraMatrix = cv::Mat(3, 3, CV_64F, const_cast<double*>(cameraD[0]));
         cv::Mat distCoeffs = cv::Mat(5, 1, CV_64F, const_cast<double*>(distC));

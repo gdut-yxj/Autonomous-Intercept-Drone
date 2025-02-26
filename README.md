@@ -4,7 +4,7 @@ An Autonomous Intercept Drone with Image-based Visual Servo.
 
 
 ## 小目标无人机检测框架
-![效果图片1](./results_picture/小目标无人机检测框架.jpg "Gazebo")
+![效果图片1](./assets/小目标无人机检测框架.jpg "Gazebo")
 
 
 ## 无人机拦截方案框架
@@ -12,7 +12,7 @@ An Autonomous Intercept Drone with Image-based Visual Servo.
 
 ## 仿真效果图
 
-![效果图片1](./results_picture/仿真效果.jpg "Gazebo")
+![效果图片1](./assets/仿真效果.jpg "Gazebo")
 
 ## 仿真环境
 
@@ -33,7 +33,7 @@ make px4_sitl gazebo-classic
 
 
 
-## Debug
+## 如何使用Vscode进行Debug
 
 Once you have your C++ code correctly implemented (at least compile), the First thing to do is to **compile the package exporting the symbols** (allow the breakpoints where you want to stop the code):
 
