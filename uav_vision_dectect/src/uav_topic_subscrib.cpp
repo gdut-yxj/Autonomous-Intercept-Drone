@@ -100,7 +100,7 @@ UavTopicSubscrib::UavTopicSubscrib() : Node("uav_topic_subscrib")
 
 void UavTopicSubscrib::uav_detect_result_loop()
 {
-    rclcpp::WallRate loop_rate(30);
+    rclcpp::WallRate loop_rate(60);
 
     while (rclcpp::ok())
     {
@@ -185,6 +185,8 @@ void UavTopicSubscrib::image_callback(const sensor_msgs::msg::Image::SharedPtr m
     CUDA_CHECK(cudaMemcpyAsync(img_device, img_host, size_image, cudaMemcpyHostToDevice, stream));
     preprocess_kernel_img(img_device, frame.cols, frame.rows, buffer_idx, INPUT_W, INPUT_H, stream);
 
+
+    double t = (double)cv::getTickCount();
     if(light_track_flag == 0)
     {
         doInference(*context, stream, (void**)buffers, prob, BATCH_SIZE);
@@ -363,6 +365,12 @@ void UavTopicSubscrib::image_callback(const sensor_msgs::msg::Image::SharedPtr m
     //     cv::line(frame, cv::Point(topLeft.x, i), cv::Point(topLeft.x, i + 2), cv::Scalar(0, 0, 255), 1);
     //     cv::line(frame, cv::Point(bottomRight.x, i), cv::Point(bottomRight.x, i + 2), cv::Scalar(0, 0, 255), 1);
     // }
+
+
+    double fps = cv::getTickFrequency() / ((double)cv::getTickCount() - t);
+    std::cout << "FPS: " << fps << std::endl;
+    std::string frameLabel = "FPS: " + std::to_string(fps);
+    cv::putText(frame, frameLabel, cv::Point(30, 100), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 255, 0), 2);
 
     // 显示图像
     cv::imshow("Camera Image", frame);
