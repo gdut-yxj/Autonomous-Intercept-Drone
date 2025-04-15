@@ -1,6 +1,6 @@
 # **DRL_UAV_NAV**
 
-![airsim_env](D:\Unreal\Unreal Projects\Autonomous-Intercept-Drone\png\airsim_env.png)
+![airsim_env](https://github.com/gdut-yxj/Autonomous-Intercept-Drone/blob/Reinforcement_learning/png/airsim_env.png)
 
 settings.json
 
