@@ -10,8 +10,8 @@ An Autonomous Intercept Drone with Image-based Visual Servo.
 ## 无人机拦截方案框架
 待补充
 
-## 仿真效果图
-
+## 仿真视频以及效果图
+https://www.bilibili.com/video/BV1M8QVYHE39/?spm_id_from=333.1387.homepage.video_card.click
 ![效果图片1](./assets/仿真效果.jpg "Gazebo")
 
 ## 仿真环境
