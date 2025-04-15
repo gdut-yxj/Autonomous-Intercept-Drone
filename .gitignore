@@ -1,0 +1,5 @@
+.idea/*
+logs/*
+scripts/logs*
+__pycache__/*
+useless/*
