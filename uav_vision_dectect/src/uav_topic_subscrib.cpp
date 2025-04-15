@@ -49,7 +49,6 @@ UavTopicSubscrib::UavTopicSubscrib() : Node("uav_topic_subscrib")
     std::string init_model = "/home/verse/ros2_ws/src/uav_vision_dectect/model/light_track/lighttrack_init";
     std::string update_model = "/home/verse/ros2_ws/src/uav_vision_dectect/model/light_track/lighttrack_update";
 
-
     siam_tracker = new LightTrack(init_model.c_str(), update_model.c_str());
 
 
@@ -78,6 +77,12 @@ UavTopicSubscrib::UavTopicSubscrib() : Node("uav_topic_subscrib")
     float half_width  = 0.72;    // 宽度
     float height = 6;           // 高度
 
+
+    uav_result_rect.x = -1;
+    uav_result_rect.y = -1;
+    uav_result_rect.width = -1;
+    uav_result_rect.height = -1;
+
     // 定义无人机与xy平面共面
     objectPoints.push_back(cv::Point3f(0, 0, 0));                            // 点1: (0, 0, 0)
     objectPoints.push_back(cv::Point3f(0, half_length, 0));                  // 点2: (0, 3.62, 0)
@@ -105,6 +110,9 @@ void UavTopicSubscrib::uav_detect_result_loop()
         pub_uav_result_rect.width = uav_result_rect.width;
         pub_uav_result_rect.height = uav_result_rect.height;
         pub_uav_result_rect.depth = obj_depth;                      //添加深度信息，该深度相对于目标位置
+
+        RCLCPP_INFO(this->get_logger(), "Detect_result: %d %d %d %d", uav_result_rect.x, uav_result_rect.x, uav_result_rect.width, uav_result_rect.height);
+
         
         uav_detect_result_publisher_->publish(pub_uav_result_rect);
 
@@ -230,8 +238,12 @@ void UavTopicSubscrib::image_callback(const sensor_msgs::msg::Image::SharedPtr m
 
             frame(trackWindow).copyTo(init_window);
 
+        }else{
+            uav_result_rect.x = -1;
+            uav_result_rect.y = -1;
+            uav_result_rect.width = -1;
+            uav_result_rect.height = -1;
         }
-
     }
 
 
@@ -292,7 +304,6 @@ void UavTopicSubscrib::image_callback(const sensor_msgs::msg::Image::SharedPtr m
                 obj_depth = tz;
 
 
-
                 // // 根据欧拉角调整平移向量
                 // CodeRotateByZ(tx, ty, -1 * theta_z, tx, ty);
                 // CodeRotateByY(tx, tz, -1 * theta_y, tx, tz);
@@ -329,7 +340,6 @@ void UavTopicSubscrib::image_callback(const sensor_msgs::msg::Image::SharedPtr m
                 // putText(frame, x_name, Point(50, 200), cv::FONT_HERSHEY_COMPLEX, 1, Scalar(255, 0, 0));
 
 
-
             } else {
                 cv::putText(frame, "Local Track Failed", cv::Point(50, 50), cv::FONT_HERSHEY_SIMPLEX, 2, cv::Scalar(0x27, 0xC1, 0x36), 2);
                 light_track_flag = 0;
@@ -339,20 +349,20 @@ void UavTopicSubscrib::image_callback(const sensor_msgs::msg::Image::SharedPtr m
     }
 
     // 绘制虚线框的起始和结束点
-    cv::Point topLeft(400, 200);
-    cv::Point bottomRight(500, 250);
+    // cv::Point topLeft(400, 200);
+    // cv::Point bottomRight(500, 250);
 
-    RCLCPP_INFO(this->get_logger(), "centerXY: %d %d %d %d", topLeft.x, topLeft.y, bottomRight.x, bottomRight.y);
+    // RCLCPP_INFO(this->get_logger(), "centerXY: %d %d %d %d", topLeft.x, topLeft.y, bottomRight.x, bottomRight.y);
 
     // 绘制红色虚线框
-    for (int i = topLeft.x; i < bottomRight.x; i += 5) {
-        cv::line(frame, cv::Point(i, topLeft.y), cv::Point(i + 2, topLeft.y), cv::Scalar(0, 0, 255), 1);
-        cv::line(frame, cv::Point(i, bottomRight.y), cv::Point(i + 2, bottomRight.y), cv::Scalar(0, 0, 255), 1);
-    }
-    for (int i = topLeft.y; i < bottomRight.y; i += 5) {
-        cv::line(frame, cv::Point(topLeft.x, i), cv::Point(topLeft.x, i + 2), cv::Scalar(0, 0, 255), 1);
-        cv::line(frame, cv::Point(bottomRight.x, i), cv::Point(bottomRight.x, i + 2), cv::Scalar(0, 0, 255), 1);
-    }
+    // for (int i = topLeft.x; i < bottomRight.x; i += 5) {
+    //     cv::line(frame, cv::Point(i, topLeft.y), cv::Point(i + 2, topLeft.y), cv::Scalar(0, 0, 255), 1);
+    //     cv::line(frame, cv::Point(i, bottomRight.y), cv::Point(i + 2, bottomRight.y), cv::Scalar(0, 0, 255), 1);
+    // }
+    // for (int i = topLeft.y; i < bottomRight.y; i += 5) {
+    //     cv::line(frame, cv::Point(topLeft.x, i), cv::Point(topLeft.x, i + 2), cv::Scalar(0, 0, 255), 1);
+    //     cv::line(frame, cv::Point(bottomRight.x, i), cv::Point(bottomRight.x, i + 2), cv::Scalar(0, 0, 255), 1);
+    // }
 
     // 显示图像
     cv::imshow("Camera Image", frame);

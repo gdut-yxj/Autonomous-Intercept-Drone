@@ -52,8 +52,8 @@ uav_ibvs_png::uav_ibvs_png() : Node("uav_ibvs_png")
 
     /************************************设置期望位置************************************/
     //初始化数据变量
-    cdMo = vpHomogeneousMatrix(10, 0, 0.75, 0, 0, 0);  //相机终点位置
-    cMo  = vpHomogeneousMatrix(0, 0, 0.75, vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));  //相机起始位置
+    cdMo = vpHomogeneousMatrix(10, 10, 0.75, 0, 0, 0);  //相机终点位置
+    cMo  = vpHomogeneousMatrix(1, 1, 0.75, vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));  //相机起始位置
 
     //角点
     ibvs_set_point.push_back(vpPoint(desire_pos_[0].x, desire_pos_[0].y, 0));

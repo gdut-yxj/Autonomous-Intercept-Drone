@@ -150,7 +150,7 @@ static int last_cls_score_positon = 170;
 bool LightTrack::target_pos_change(void)
 {
     bool IsChangeFlag = 0;   //中心点目标改变标志位
-    if(abs(this->cls_score_position - last_cls_score_positon ) <= 25){
+    if(abs(this->cls_score_position - last_cls_score_positon ) <= 30){
         IsChangeFlag = 0;
         last_cls_score_positon = this->cls_score_position;
     } else{
