@@ -199,7 +199,7 @@ source install/setup.bash
 
    > **架构说明**：RL 策略在 INTERCEPT 阶段输出速度指令；若策略出现异常（watchdog），自动回退到内置 PNG 控制器。
    > 策略模型（ONNX `.onnx`）存放在 `uav_rl_guidance/models/` 下，
-   > 训练代码见 [visual-guidance-intercept](https://github.com/Eaglewzw/visual-guidance-intercept.git)，更新模型时执行 `python3 uav_rl_guidance/src/export_onnx.py`。
+   > 训练代码见 [AeroIntercept](https://github.com/Eaglewzw/AeroIntercept)，更新模型时执行 `python3 uav_rl_guidance/src/export_onnx.py`。
 
 3. **启动视觉检测**:
    ```bash
