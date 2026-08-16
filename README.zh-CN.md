@@ -37,7 +37,7 @@
 <div align="center">
   <img src="assets/output.gif" alt="拦截动态演示" width="80%">
   <p><i>（通过 PNG 算法预判目标航迹，实现精准的物理碰撞拦截）</i></p>
-  <p><b>📺 <a href="https://www.bilibili.com/video/BV1M8QVYHE39/">点击此处前往 Bilibili 观看完整高清演示视频</a></b></p>
+  <p><b>📺 <a href="https://www.bilibili.com/video/BV1sKBVBgEZ9/">点击此处前往 Bilibili 观看完整高清演示视频</a></b></p>
 </div>
 
 ### 2. 小目标无人机检测框架
