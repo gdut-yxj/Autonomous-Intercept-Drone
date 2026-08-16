@@ -58,6 +58,7 @@ e_x \rightarrow 0 \\
 \Delta e_y \le \epsilon
 \end{cases}
 $$
+
 确保拦截全过程的 2D 可见性。
 
 ### 控制层 (Control Layer)
