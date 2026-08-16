@@ -33,7 +33,7 @@ Developed in the ROS 2 environment and combined with the PX4 firmware and the Ga
 <div align="center">
   <img src="assets/output.gif" alt="Interception dynamic demonstration" width="80%">
   <p><i>(The PNG algorithm predicts the target trajectory to achieve precise physical collision interception.)</i></p>
-  <p><b>📺 <a href="https://www.bilibili.com/video/BV1M8QVYHE39/">Click here to watch the full HD demonstration video on Bilibili</a></b></p>
+  <p><b>📺 <a href="https://www.bilibili.com/video/BV1sKBVBgEZ9/">Click here to watch the full HD demonstration video on Bilibili</a></b></p>
 </div>
 
 ### 2. Small-Target Drone Detection Framework
